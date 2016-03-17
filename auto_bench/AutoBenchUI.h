@@ -3,11 +3,13 @@
 namespace auto_bench {
 
 	using namespace System;
+	using namespace System::Diagnostics;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Windows::Automation;
 
 	/// <summary>
 	/// AutoBenchUI ‚ÌŠT—v
@@ -38,6 +40,7 @@ namespace auto_bench {
 	private: System::Windows::Forms::SplitContainer^  splitContainer2;
 	private: System::Windows::Forms::SplitContainer^  splitContainer3;
 	private: System::Windows::Forms::CheckedListBox^  checkedListBox1;
+	private: System::Windows::Forms::Button^  button1;
 
 	protected:
 
@@ -55,10 +58,12 @@ namespace auto_bench {
 		void InitializeComponent(void)
 		{
 			this->splitContainer1 = (gcnew System::Windows::Forms::SplitContainer());
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->splitContainer2 = (gcnew System::Windows::Forms::SplitContainer());
 			this->checkedListBox1 = (gcnew System::Windows::Forms::CheckedListBox());
 			this->splitContainer3 = (gcnew System::Windows::Forms::SplitContainer());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer1))->BeginInit();
+			this->splitContainer1->Panel1->SuspendLayout();
 			this->splitContainer1->Panel2->SuspendLayout();
 			this->splitContainer1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer2))->BeginInit();
@@ -78,12 +83,26 @@ namespace auto_bench {
 			this->splitContainer1->Name = L"splitContainer1";
 			this->splitContainer1->Orientation = System::Windows::Forms::Orientation::Horizontal;
 			// 
+			// splitContainer1.Panel1
+			// 
+			this->splitContainer1->Panel1->Controls->Add(this->button1);
+			// 
 			// splitContainer1.Panel2
 			// 
 			this->splitContainer1->Panel2->Controls->Add(this->splitContainer2);
-			this->splitContainer1->Size = System::Drawing::Size(411, 415);
+			this->splitContainer1->Size = System::Drawing::Size(674, 415);
 			this->splitContainer1->SplitterDistance = 28;
 			this->splitContainer1->TabIndex = 0;
+			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(3, 2);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(40, 23);
+			this->button1->TabIndex = 0;
+			this->button1->Text = L"Start";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &AutoBenchUI::button1_Click);
 			// 
 			// splitContainer2
 			// 
@@ -100,7 +119,7 @@ namespace auto_bench {
 			// splitContainer2.Panel2
 			// 
 			this->splitContainer2->Panel2->Controls->Add(this->splitContainer3);
-			this->splitContainer2->Size = System::Drawing::Size(411, 383);
+			this->splitContainer2->Size = System::Drawing::Size(674, 383);
 			this->splitContainer2->SplitterDistance = 70;
 			this->splitContainer2->TabIndex = 0;
 			// 
@@ -121,7 +140,7 @@ namespace auto_bench {
 			this->splitContainer3->IsSplitterFixed = true;
 			this->splitContainer3->Location = System::Drawing::Point(0, 0);
 			this->splitContainer3->Name = L"splitContainer3";
-			this->splitContainer3->Size = System::Drawing::Size(337, 383);
+			this->splitContainer3->Size = System::Drawing::Size(600, 383);
 			this->splitContainer3->SplitterDistance = 123;
 			this->splitContainer3->TabIndex = 0;
 			// 
@@ -129,10 +148,11 @@ namespace auto_bench {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(411, 415);
+			this->ClientSize = System::Drawing::Size(674, 415);
 			this->Controls->Add(this->splitContainer1);
 			this->Name = L"AutoBenchUI";
 			this->Text = L"Automatic Benchmark Launcher";
+			this->splitContainer1->Panel1->ResumeLayout(false);
 			this->splitContainer1->Panel2->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer1))->EndInit();
 			this->splitContainer1->ResumeLayout(false);
@@ -166,6 +186,10 @@ namespace auto_bench {
 				blockSizeGroup->Controls->Add(blockSizeInput);
 				this->splitContainer3->Panel1->Controls->Add(blockSizeGroup);
 			}
+		}
+
+		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			Process::Start("IOmeter.exe");
 		}
 };
 }
