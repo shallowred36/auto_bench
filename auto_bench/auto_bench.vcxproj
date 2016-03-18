@@ -145,6 +145,7 @@
     <ClInclude Include="AutoBenchUI.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="BenchItem.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AutoBenchUI.resx">
