@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fileapi.h>
+
 namespace auto_bench {
 
 	using namespace System;
@@ -43,7 +45,22 @@ namespace auto_bench {
 	private: System::Windows::Forms::Button^  button1;
 
     //Iometer-related form objects
-	private: System::Windows::Forms::
+	private:
+		System::Windows::Forms::Panel^ iometerPanel;
+		System::Windows::Forms::GroupBox^ blockSizeGroup;
+		System::Windows::Forms::Label^ blockSizeLabel;
+		System::Windows::Forms::Label^ blockSizeUnitLabel;
+		System::Windows::Forms::TextBox^ blockSizeInput;
+		System::Windows::Forms::GroupBox^ iometerTargetGroup;
+		System::Windows::Forms::Label^ iometerTargetLabel;
+		System::Windows::Forms::ComboBox^ iometerTargetCombo;
+
+	//CDM-related form objects
+	private:
+		System::Windows::Forms::Panel^ CDMPanel;
+		System::Windows::Forms::GroupBox^ dataSizeGroup;
+		System::Windows::Forms::Label^ dataSizeLabel;
+		System::Windows::Forms::ComboBox^ dataSizeCombo;
 
 	protected:
 
@@ -76,6 +93,10 @@ namespace auto_bench {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer3))->BeginInit();
 			this->splitContainer3->SuspendLayout();
 			this->SuspendLayout();
+			ListDrives();
+			IometerInitialize();
+			CDMInitialize();
+			ASSSDInitialize();
 			// 
 			// splitContainer1
 			// 
@@ -168,8 +189,13 @@ namespace auto_bench {
 			this->ResumeLayout(false);
 
 		}
+
 #pragma endregion
-	private: 
+	private:
+		void ListDrives(void);
+		void IometerInitialize(void);
+		void CDMInitialize(void);
+		void ASSSDInitialize(void);
 		System::Void checkedListBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e);
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
 };
