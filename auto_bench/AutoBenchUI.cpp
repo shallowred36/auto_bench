@@ -5,6 +5,7 @@ using namespace auto_bench;
 System::Void AutoBenchUI::checkedListBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (checkedListBox1->SelectedIndex == 0) {
 		splitContainer3->Panel1->Controls->Clear();
+		ListDrives();
 		splitContainer3->Panel1->Controls->Add(iometerPanel);
 	}
 	else if (checkedListBox1->SelectedIndex == 1) {
@@ -24,13 +25,26 @@ System::Void AutoBenchUI::button1_Click(System::Object^  sender, System::EventAr
 			Process::Start("iometer\\IOmeter.exe");
 		}
 		else if (indexChecked == 1) {
-			Process::Start("CDM\\DiskMark64.exe");
+			Process::Start("CDM\\DiskMark32.exe");
 		}
 	}
 }
 
-void ListDrives(void) {
-	
+void AutoBenchUI::ListDrives(void) {
+	TCHAR szDrives[256] = { 0 };
+	LPTSTR pDrive = szDrives;
+	GetLogicalDriveStrings(255, szDrives);
+	//List<String ^>^ drives = gcnew List<String ^>();
+	//String^ test = gcnew String(pDrive);
+	//MessageBox::Show(test);
+	while (pDrive[0] != _T('\0')) {
+		int result = GetDriveType(pDrive);
+		int forward = (int)_tcslen(pDrive);
+		if (result == DRIVE_FIXED || result == DRIVE_REMOTE || result == DRIVE_REMOVABLE || result == DRIVE_RAMDISK) {
+			iometerTargetCombo->Items->Add(String::Format("%C: ", pDrive[0]));
+		}
+		pDrive += forward + 1;
+	}
 }
 
 void AutoBenchUI::IometerInitialize(void) {
@@ -39,6 +53,9 @@ void AutoBenchUI::IometerInitialize(void) {
 	blockSizeLabel = (gcnew System::Windows::Forms::Label());
 	blockSizeUnitLabel = (gcnew System::Windows::Forms::Label());
 	blockSizeInput = (gcnew System::Windows::Forms::TextBox());
+	iometerTargetGroup = (gcnew System::Windows::Forms::GroupBox());
+	iometerTargetLabel = (gcnew System::Windows::Forms::Label());
+	iometerTargetCombo = (gcnew System::Windows::Forms::ComboBox());
 	blockSizeLabel->Text = "Block size";
 	blockSizeLabel->AutoSize = true;
 	blockSizeUnitLabel->Text = "KiB";
@@ -50,7 +67,14 @@ void AutoBenchUI::IometerInitialize(void) {
 	blockSizeGroup->Controls->Add(blockSizeLabel);
 	blockSizeGroup->Controls->Add(blockSizeUnitLabel);
 	blockSizeGroup->Controls->Add(blockSizeInput);
+	iometerTargetLabel->Text = "Target";
+	iometerTargetLabel->AutoSize = true;
+	iometerTargetCombo->AutoSize = true;
+	iometerTargetGroup->Controls->Add(iometerTargetLabel);
+	iometerTargetGroup->Controls->Add(iometerTargetCombo);
+	iometerTargetGroup->Location = Point(0, 50);
 	iometerPanel->Controls->Add(blockSizeGroup);
+	iometerPanel->Controls->Add(iometerTargetGroup);
 }
 
 void AutoBenchUI::CDMInitialize(void) {
