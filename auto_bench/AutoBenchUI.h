@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tchar.h>
+#include <Windows.h>
 #include <fileapi.h>
 
 namespace auto_bench {
@@ -62,6 +64,9 @@ namespace auto_bench {
 		System::Windows::Forms::Label^ dataSizeLabel;
 		System::Windows::Forms::ComboBox^ dataSizeCombo;
 
+	//Common properties
+	
+
 	protected:
 
 	private:
@@ -93,7 +98,6 @@ namespace auto_bench {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer3))->BeginInit();
 			this->splitContainer3->SuspendLayout();
 			this->SuspendLayout();
-			ListDrives();
 			IometerInitialize();
 			CDMInitialize();
 			ASSSDInitialize();
@@ -114,7 +118,7 @@ namespace auto_bench {
 			// splitContainer1.Panel2
 			// 
 			this->splitContainer1->Panel2->Controls->Add(this->splitContainer2);
-			this->splitContainer1->Size = System::Drawing::Size(674, 415);
+			this->splitContainer1->Size = System::Drawing::Size(1500, 1000);
 			this->splitContainer1->SplitterDistance = 28;
 			this->splitContainer1->TabIndex = 0;
 			// 
@@ -167,6 +171,7 @@ namespace auto_bench {
 			this->splitContainer3->Size = System::Drawing::Size(600, 383);
 			this->splitContainer3->SplitterDistance = 123;
 			this->splitContainer3->TabIndex = 0;
+			//this->splitContainer3->Panel1->AutoSize = true;
 			// 
 			// AutoBenchUI
 			// 
