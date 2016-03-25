@@ -24,9 +24,13 @@ namespace auto_bench {
 		AutoBenchUI(void)
 		{
 			InitializeComponent();
+
 			//
 			//TODO: ここにコンストラクター コードを追加します
 			//
+			IometerInitialize();
+			CDMInitialize();
+			//ASSSDInitialize();
 		}
 
 	protected:
@@ -56,6 +60,13 @@ namespace auto_bench {
 		System::Windows::Forms::GroupBox^ iometerTargetGroup;
 		System::Windows::Forms::Label^ iometerTargetLabel;
 		System::Windows::Forms::ComboBox^ iometerTargetCombo;
+		System::Windows::Forms::GroupBox^ iometerDataSizeGroup;
+		System::Windows::Forms::Label^ iometerDataSizeLabel;
+		System::Windows::Forms::Label^ iometerDataSizeUnitLabel;
+		System::Windows::Forms::TextBox^ iometerDataSizeInput;
+		System::Windows::Forms::GroupBox^ iometerQueueGroup;
+		System::Windows::Forms::Label^ iometerQueueLabel;
+		System::Windows::Forms::TextBox^ iometerQueueInput;
 
 	//CDM-related form objects
 	private:
@@ -63,6 +74,12 @@ namespace auto_bench {
 		System::Windows::Forms::GroupBox^ dataSizeGroup;
 		System::Windows::Forms::Label^ dataSizeLabel;
 		System::Windows::Forms::ComboBox^ dataSizeCombo;
+		System::Windows::Forms::GroupBox^ CDMTargetGroup;
+		System::Windows::Forms::Label^ CDMTargetLabel;
+		System::Windows::Forms::ComboBox^ CDMTargetCombo;
+		System::Windows::Forms::GroupBox^ CDMQueueGroup;
+		System::Windows::Forms::Label^ CDMQueueLabel;
+		System::Windows::Forms::ComboBox^ CDMQueueCombo;
 
 	//Common properties
 	
@@ -98,9 +115,6 @@ namespace auto_bench {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitContainer3))->BeginInit();
 			this->splitContainer3->SuspendLayout();
 			this->SuspendLayout();
-			IometerInitialize();
-			CDMInitialize();
-			ASSSDInitialize();
 			// 
 			// splitContainer1
 			// 
@@ -118,7 +132,7 @@ namespace auto_bench {
 			// splitContainer1.Panel2
 			// 
 			this->splitContainer1->Panel2->Controls->Add(this->splitContainer2);
-			this->splitContainer1->Size = System::Drawing::Size(1500, 1000);
+			this->splitContainer1->Size = System::Drawing::Size(700, 500);
 			this->splitContainer1->SplitterDistance = 28;
 			this->splitContainer1->TabIndex = 0;
 			// 
@@ -147,14 +161,14 @@ namespace auto_bench {
 			// splitContainer2.Panel2
 			// 
 			this->splitContainer2->Panel2->Controls->Add(this->splitContainer3);
-			this->splitContainer2->Size = System::Drawing::Size(674, 383);
+			this->splitContainer2->Size = System::Drawing::Size(700, 468);
 			this->splitContainer2->SplitterDistance = 70;
 			this->splitContainer2->TabIndex = 0;
 			// 
 			// checkedListBox1
 			// 
 			this->checkedListBox1->FormattingEnabled = true;
-			this->checkedListBox1->Items->AddRange(gcnew cli::array< System::Object^  >(3) { L"Iometer", L"CDM", L"AS SSD" });
+			this->checkedListBox1->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Iometer", L"CDM" });
 			this->checkedListBox1->Location = System::Drawing::Point(3, 0);
 			this->checkedListBox1->Name = L"checkedListBox1";
 			this->checkedListBox1->Size = System::Drawing::Size(65, 46);
@@ -168,16 +182,15 @@ namespace auto_bench {
 			this->splitContainer3->IsSplitterFixed = true;
 			this->splitContainer3->Location = System::Drawing::Point(0, 0);
 			this->splitContainer3->Name = L"splitContainer3";
-			this->splitContainer3->Size = System::Drawing::Size(600, 383);
+			this->splitContainer3->Size = System::Drawing::Size(626, 468);
 			this->splitContainer3->SplitterDistance = 123;
 			this->splitContainer3->TabIndex = 0;
-			//this->splitContainer3->Panel1->AutoSize = true;
 			// 
 			// AutoBenchUI
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(674, 415);
+			this->ClientSize = System::Drawing::Size(700, 500);
 			this->Controls->Add(this->splitContainer1);
 			this->Name = L"AutoBenchUI";
 			this->Text = L"Automatic Benchmark Launcher";
@@ -197,11 +210,12 @@ namespace auto_bench {
 
 #pragma endregion
 	private:
-		void ListDrives(void);
+		void ListDrives(int index);
 		void IometerInitialize(void);
 		void CDMInitialize(void);
 		void ASSSDInitialize(void);
 		System::Void checkedListBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e);
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
+		//System::Void groupBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e);
 };
 }
