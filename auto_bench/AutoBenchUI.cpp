@@ -23,10 +23,28 @@ System::Void AutoBenchUI::button1_Click(System::Object^  sender, System::EventAr
 	while (benchEnum->MoveNext()) {
 		Int32 indexChecked = *safe_cast<Int32^>(benchEnum->Current);
 		if (indexChecked == 0) {
-			Process::Start("iometer\\IOmeter.exe");
+			Process^ iometerProcess = gcnew Process;
+			ProcessStartInfo^ iometerProcessStartInfo = gcnew ProcessStartInfo;
+			iometerProcessStartInfo->FileName = "iometer\\IOmeter.exe";
+			iometerProcess->StartInfo = iometerProcessStartInfo;
+			iometerProcess->Start();
+			iometerProcess->WaitForInputIdle();
+			MessageBox::Show("Starting IOmeter...");
+			IometerConfigure();
+			//Sleep(1000);
+			//iometerProcess->CloseMainWindow();
+			//iometerProcess->Close();
 		}
 		else if (indexChecked == 1) {
-			Process::Start("CDM\\DiskMark32.exe");
+			Process^ cdmProcess = gcnew Process;
+			ProcessStartInfo^ cdmProcessStartInfo = gcnew ProcessStartInfo;
+			cdmProcessStartInfo->FileName = "CDM\\DiskMark32.exe";
+			cdmProcess->StartInfo = cdmProcessStartInfo;
+			cdmProcess->Start();
+			cdmProcess->WaitForInputIdle();
+			MessageBox::Show("Starting CrystalDiskMark...");
+			//cdmProcess->CloseMainWindow();
+			//cdmProcess->Close();
 		}
 	}
 }
@@ -182,5 +200,9 @@ void AutoBenchUI::CDMInitialize(void) {
 }
 
 void AutoBenchUI::ASSSDInitialize(void) {
+
+}
+
+void AutoBenchUI::IometerConfigure(void) {
 
 }
