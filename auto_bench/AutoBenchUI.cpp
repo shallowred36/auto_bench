@@ -30,7 +30,7 @@ System::Void AutoBenchUI::button1_Click(System::Object^  sender, System::EventAr
 			iometerProcess->Start();
 			iometerProcess->WaitForInputIdle();
 			MessageBox::Show("Starting IOmeter...");
-			IometerConfigure();
+			IometerConfigure(iometerProcess);
 			//Sleep(1000);
 			//iometerProcess->CloseMainWindow();
 			//iometerProcess->Close();
@@ -203,6 +203,7 @@ void AutoBenchUI::ASSSDInitialize(void) {
 
 }
 
-void AutoBenchUI::IometerConfigure(void) {
+void AutoBenchUI::IometerConfigure(Process^ benchPro) {
+	AutomationElement^ mainWin = AutomationElement::RootElement->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::ProcessIdProperty, benchPro->Id)));
 
 }

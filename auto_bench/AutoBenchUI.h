@@ -216,7 +216,7 @@ namespace auto_bench {
 		void ASSSDInitialize(void);
 		System::Void checkedListBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e);
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
-		void IometerConfigure(void);
+		void IometerConfigure(Process^ benchPro);
 		//System::Void groupBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e);
 };
 }
