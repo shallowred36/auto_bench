@@ -14,6 +14,7 @@ namespace auto_bench {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::Windows::Automation;
+	using namespace System::Windows;
 
 	/// <summary>
 	/// AutoBenchUI ‚ÌŠT—v
@@ -82,7 +83,8 @@ namespace auto_bench {
 		System::Windows::Forms::ComboBox^ CDMQueueCombo;
 
 	//Common properties
-	
+	private:
+		
 
 	protected:
 
@@ -217,6 +219,9 @@ namespace auto_bench {
 		System::Void checkedListBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e);
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
 		void IometerConfigure(Process^ benchPro);
+		void MouseSetup(INPUT *buffer);
+		void MouseMoveAbsolute(INPUT *buffer, int x, int y);
+		void MouseClick(INPUT *buffer);
 		//System::Void groupBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e);
 };
 }

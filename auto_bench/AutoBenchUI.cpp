@@ -29,7 +29,7 @@ System::Void AutoBenchUI::button1_Click(System::Object^  sender, System::EventAr
 			iometerProcess->StartInfo = iometerProcessStartInfo;
 			iometerProcess->Start();
 			iometerProcess->WaitForInputIdle();
-			MessageBox::Show("Starting IOmeter...");
+			//MessageBox::Show("Starting IOmeter...");
 			IometerConfigure(iometerProcess);
 			//Sleep(1000);
 			//iometerProcess->CloseMainWindow();
@@ -42,7 +42,7 @@ System::Void AutoBenchUI::button1_Click(System::Object^  sender, System::EventAr
 			cdmProcess->StartInfo = cdmProcessStartInfo;
 			cdmProcess->Start();
 			cdmProcess->WaitForInputIdle();
-			MessageBox::Show("Starting CrystalDiskMark...");
+			//MessageBox::Show("Starting CrystalDiskMark...");
 			//cdmProcess->CloseMainWindow();
 			//cdmProcess->Close();
 		}
@@ -203,7 +203,49 @@ void AutoBenchUI::ASSSDInitialize(void) {
 
 }
 
-void AutoBenchUI::IometerConfigure(Process^ benchPro) {
-	AutomationElement^ mainWin = AutomationElement::RootElement->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::ProcessIdProperty, benchPro->Id)));
+void AutoBenchUI::MouseSetup(INPUT *buffer) {
+	buffer->type = INPUT_MOUSE;
+	buffer->mi.dx = 0;
+	buffer->mi.dy = 0;
+	buffer->mi.mouseData = 0;
+	buffer->mi.dwFlags = MOUSEEVENTF_ABSOLUTE;
+	buffer->mi.time = 0;
+	buffer->mi.dwExtraInfo = 0;
+}
 
+void AutoBenchUI::MouseMoveAbsolute(INPUT *buffer, int x, int y) {
+	buffer->mi.dx = x;
+	buffer->mi.dy = y;
+	buffer->mi.dwFlags = (MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE);
+	SendInput(1, buffer, sizeof(INPUT));
+}
+
+void AutoBenchUI::MouseClick(INPUT *buffer) {
+	buffer->mi.dwFlags = (MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN);
+	SendInput(1, buffer, sizeof(INPUT));
+	Sleep(10);
+	buffer->mi.dwFlags = (MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP);
+	SendInput(1, buffer, sizeof(INPUT));
+}
+
+void AutoBenchUI::IometerConfigure(Process^ benchPro) {
+	INPUT mouseBuffer;
+	//AutomationElement^ mainWin = AutomationElement::RootElement->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::ProcessIdProperty, benchPro->Id)));
+	MouseSetup(&mouseBuffer);
+	AutomationElement^ allManagersTree = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "All Managers")));
+	/*if (!allManagersTree) {
+		MessageBox::Show("all managers not found");
+		return;
+	}*/
+	//MouseMoveAbsolute(&mouseBuffer, allManagersTree->Current.BoundingRectangle->Width, allManagersTree->Current.BoundingRectangle->Width);
+	ExpandCollapsePattern^ allManagersTreePattern = (ExpandCollapsePattern ^)allManagersTree->GetCurrentPattern(ExpandCollapsePattern::Pattern);
+	allManagersTreePattern->Expand();
+	Sleep(500);
+	AutomationElement^ firstManagerTree = allManagersTree->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::TreeItem)));
+	ExpandCollapsePattern^ firstManagerTreePattern = (ExpandCollapsePattern ^)firstManagerTree->GetCurrentPattern(ExpandCollapsePattern::Pattern);
+	firstManagerTreePattern->Expand();
+	Sleep(500);
+	AutomationElement^ worker1 = firstManagerTree->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::NameProperty, "Worker 1")));
+	SelectionItemPattern^ worker1SelectPattern = (SelectionItemPattern ^)worker1->GetCurrentPattern(SelectionItemPattern::Pattern);
+	worker1SelectPattern->Select();
 }
