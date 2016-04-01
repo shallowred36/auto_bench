@@ -96,20 +96,20 @@ void AutoBenchUI::IometerInitialize(void) {
 	blockSizeLabel->AutoSize = true;
 	blockSizeUnitLabel->Text = "KiB";
 	blockSizeUnitLabel->AutoSize = true;
-	blockSizeUnitLabel->Location = Point(75, 18);
+	blockSizeUnitLabel->Location = System::Drawing::Point(75, 18);
 	blockSizeInput->Text = "128";
-	blockSizeInput->Location = Point(5, 15);
+	blockSizeInput->Location = System::Drawing::Point(5, 15);
 	blockSizeInput->Width = 60;
 	blockSizeGroup->Height = 40;
 	blockSizeGroup->Width = 100;
-	blockSizeGroup->Location = Point(0, 150);
+	blockSizeGroup->Location = System::Drawing::Point(0, 150);
 	//blockSizeGroup->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &AutoBenchUI::groupBox_Paint);
 	blockSizeGroup->Controls->Add(blockSizeLabel);
 	blockSizeGroup->Controls->Add(blockSizeUnitLabel);
 	blockSizeGroup->Controls->Add(blockSizeInput);
 	iometerTargetLabel->Text = "Target";
 	iometerTargetLabel->AutoSize = true;
-	iometerTargetCombo->Location = Point(5, 15);
+	iometerTargetCombo->Location = System::Drawing::Point(5, 15);
 	iometerTargetCombo->Width = 90;
 	iometerTargetCombo->Text = "C:";
 	iometerTargetGroup->Controls->Add(iometerTargetLabel);
@@ -120,24 +120,24 @@ void AutoBenchUI::IometerInitialize(void) {
 	iometerDataSizeLabel->AutoSize = true;
 	iometerDataSizeUnitLabel->Text = "MiB";
 	iometerDataSizeUnitLabel->AutoSize = true;
-	iometerDataSizeUnitLabel->Location = Point(75, 18);
+	iometerDataSizeUnitLabel->Location = System::Drawing::Point(75, 18);
 	iometerDataSizeInput->Text = "1024";
-	iometerDataSizeInput->Location = Point(5, 15);
+	iometerDataSizeInput->Location = System::Drawing::Point(5, 15);
 	iometerDataSizeInput->Width = 60;
 	iometerDataSizeGroup->Height = 40;
 	iometerDataSizeGroup->Width = 100;
-	iometerDataSizeGroup->Location = Point(0, 50);
+	iometerDataSizeGroup->Location = System::Drawing::Point(0, 50);
 	iometerDataSizeGroup->Controls->Add(iometerDataSizeLabel);
 	iometerDataSizeGroup->Controls->Add(iometerDataSizeUnitLabel);
 	iometerDataSizeGroup->Controls->Add(iometerDataSizeInput);
 	iometerQueueLabel->Text = "Queue depth";
 	iometerQueueLabel->AutoSize = true;
 	iometerQueueInput->Text = "32";
-	iometerQueueInput->Location = Point(5, 15);
+	iometerQueueInput->Location = System::Drawing::Point(5, 15);
 	iometerQueueInput->Width = 60;
 	iometerQueueGroup->Height = 40;
 	iometerQueueGroup->Width = 100;
-	iometerQueueGroup->Location = Point(0, 100);
+	iometerQueueGroup->Location = System::Drawing::Point(0, 100);
 	iometerQueueGroup->Controls->Add(iometerQueueLabel);
 	iometerQueueGroup->Controls->Add(iometerQueueInput);
 	iometerPanel->Controls->Add(blockSizeGroup);
@@ -165,17 +165,17 @@ void AutoBenchUI::CDMInitialize(void) {
 	//	System::Windows::Forms::AnchorStyles::Right);
 	array<Object ^>^ sizeArray = { "50MiB", "100MiB", "500MiB", "1GiB", "2GiB", "4GiB", "8GiB", "16GiB", "32GiB" };
 	dataSizeCombo->Items->AddRange(sizeArray);
-	dataSizeCombo->Location = Point(5, 15);
+	dataSizeCombo->Location = System::Drawing::Point(5, 15);
 	dataSizeCombo->Width = 90;
 	dataSizeCombo->Text = "1GiB";
 	dataSizeGroup->Height = 40;
 	dataSizeGroup->Width = 100;
-	dataSizeGroup->Location = Point(0, 50);
+	dataSizeGroup->Location = System::Drawing::Point(0, 50);
 	dataSizeGroup->Controls->Add(dataSizeLabel);
 	dataSizeGroup->Controls->Add(dataSizeCombo);
 	CDMTargetLabel->Text = "Target";
 	CDMTargetLabel->AutoSize = true;
-	CDMTargetCombo->Location = Point(5, 15);
+	CDMTargetCombo->Location = System::Drawing::Point(5, 15);
 	CDMTargetCombo->Width = 90;
 	CDMTargetCombo->Text = "C:";
 	CDMTargetGroup->Controls->Add(CDMTargetLabel);
@@ -186,12 +186,12 @@ void AutoBenchUI::CDMInitialize(void) {
 	CDMQueueLabel->AutoSize = true;
 	array<Object ^>^ queueArray = { "1", "2", "4", "8", "16", "32", "64", "128", "256", "512" };
 	CDMQueueCombo->Items->AddRange(queueArray);
-	CDMQueueCombo->Location = Point(5, 15);
+	CDMQueueCombo->Location = System::Drawing::Point(5, 15);
 	CDMQueueCombo->Width = 90;
 	CDMQueueCombo->Text = "32";
 	CDMQueueGroup->Height = 40;
 	CDMQueueGroup->Width = 100;
-	CDMQueueGroup->Location = Point(0, 100);
+	CDMQueueGroup->Location = System::Drawing::Point(0, 100);
 	CDMQueueGroup->Controls->Add(CDMQueueLabel);
 	CDMQueueGroup->Controls->Add(CDMQueueCombo);
 	CDMPanel->Controls->Add(dataSizeGroup);
@@ -203,41 +203,13 @@ void AutoBenchUI::ASSSDInitialize(void) {
 
 }
 
-void AutoBenchUI::MouseSetup(INPUT *buffer) {
-	buffer->type = INPUT_MOUSE;
-	buffer->mi.dx = 0;
-	buffer->mi.dy = 0;
-	buffer->mi.mouseData = 0;
-	buffer->mi.dwFlags = MOUSEEVENTF_ABSOLUTE;
-	buffer->mi.time = 0;
-	buffer->mi.dwExtraInfo = 0;
-}
-
-void AutoBenchUI::MouseMoveAbsolute(INPUT *buffer, int x, int y) {
-	buffer->mi.dx = x;
-	buffer->mi.dy = y;
-	buffer->mi.dwFlags = (MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE);
-	SendInput(1, buffer, sizeof(INPUT));
-}
-
-void AutoBenchUI::MouseClick(INPUT *buffer) {
-	buffer->mi.dwFlags = (MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN);
-	SendInput(1, buffer, sizeof(INPUT));
-	Sleep(10);
-	buffer->mi.dwFlags = (MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTUP);
-	SendInput(1, buffer, sizeof(INPUT));
-}
-
 void AutoBenchUI::IometerConfigure(Process^ benchPro) {
-	INPUT mouseBuffer;
 	//AutomationElement^ mainWin = AutomationElement::RootElement->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::ProcessIdProperty, benchPro->Id)));
-	MouseSetup(&mouseBuffer);
 	AutomationElement^ allManagersTree = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "All Managers")));
 	/*if (!allManagersTree) {
 		MessageBox::Show("all managers not found");
 		return;
 	}*/
-	//MouseMoveAbsolute(&mouseBuffer, allManagersTree->Current.BoundingRectangle->Width, allManagersTree->Current.BoundingRectangle->Width);
 	ExpandCollapsePattern^ allManagersTreePattern = (ExpandCollapsePattern ^)allManagersTree->GetCurrentPattern(ExpandCollapsePattern::Pattern);
 	allManagersTreePattern->Expand();
 	Sleep(500);
@@ -248,4 +220,76 @@ void AutoBenchUI::IometerConfigure(Process^ benchPro) {
 	AutomationElement^ worker1 = firstManagerTree->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::NameProperty, "Worker 1")));
 	SelectionItemPattern^ worker1SelectPattern = (SelectionItemPattern ^)worker1->GetCurrentPattern(SelectionItemPattern::Pattern);
 	worker1SelectPattern->Select();
+	AutomationElement^ targetsTree = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1018")));
+	AutomationElementCollection^ drives = targetsTree->FindAll(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::TreeItem)));
+	IEnumerator^ eachDrive = drives->GetEnumerator();
+	while (eachDrive->MoveNext()) {
+		AutomationElement^ drive = (AutomationElement^ )eachDrive->Current;
+		if (drive->Current.Name->Contains(iometerTargetCombo->Text)) {
+			//SelectionItemPattern^ driveSelectPattern = (SelectionItemPattern ^)drive->GetCurrentPattern(SelectionItemPattern::Pattern);
+			//Sleep(500);
+			//driveSelectPattern->Select();
+			System::Windows::Point p = drive->GetClickablePoint();
+			System::Drawing::Point pp = System::Drawing::Point(Convert::ToInt32(p.X), Convert::ToInt32(p.Y));
+			Mouse::MoveTo(pp);
+			Mouse::Click(MouseButton::Left);
+			break;
+		}
+	}
+	AutomationElement^ maxDiskSize = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "3001")));
+	ValuePattern^ maxDiskSizeValuePattern = (ValuePattern^)maxDiskSize->GetCurrentPattern(ValuePattern::Pattern);
+	maxDiskSizeValuePattern->SetValue(String::Format("{0}", (Int32::Parse(iometerDataSizeInput->Text) * 1024 / 4)));
+	AutomationElement^ outstandingIO = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "3012")));
+	ValuePattern^ outstandingIOValuePattern = (ValuePattern^)outstandingIO->GetCurrentPattern(ValuePattern::Pattern);
+	outstandingIOValuePattern->SetValue(String::Format("{0}", iometerQueueInput->Text));
+	AutomationElement^ accessSpecTab = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "Access Specifications")));
+	SelectionItemPattern^ accessSpecTabSelectPattern = (SelectionItemPattern ^)accessSpecTab->GetCurrentPattern(SelectionItemPattern::Pattern);
+	accessSpecTabSelectPattern->Select();
+	AutomationElement^ newButton = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1025")));
+	InvokePattern^ newButtonInvokePattern = (InvokePattern^)newButton->GetCurrentPattern(InvokePattern::Pattern);
+	array<System::String^>^ blockSizes = blockSizeInput->Text->Split(String::Format(",")->ToCharArray());
+	IEnumerator^ eachBlockSize = blockSizes->GetEnumerator();
+	while (eachBlockSize->MoveNext()) {
+		newButtonInvokePattern->Invoke();
+		Sleep(500);
+		for (int i = 0; i < 4; i++) {
+			AutomationElement^ editAccessWindow = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "Edit Access Specification")));
+			/*if (!editAccessWindow) {
+			MessageBox::Show("edit window not found");
+			return;
+			}*/
+			AutomationElement^ transRequestSize = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1031")));
+			RangeValuePattern^ transRequestSizeRangePattern = (RangeValuePattern^)transRequestSize->GetCurrentPattern(RangeValuePattern::Pattern);
+			transRequestSizeRangePattern->SetValue(Int32::Parse((String ^)eachBlockSize->Current));
+			AutomationElement^ perSeqRanSlider = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "5001")));
+			RangeValuePattern^ perSeqRanSliderRangePattern = (RangeValuePattern^)perSeqRanSlider->GetCurrentPattern(RangeValuePattern::Pattern);
+			AutomationElement^ perReadWriteSlider = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "5000")));
+			RangeValuePattern^ perReadWriteSliderRangePattern = (RangeValuePattern^)perReadWriteSlider->GetCurrentPattern(RangeValuePattern::Pattern);
+			switch (i) {
+			case 0: //Seq Write
+				perSeqRanSliderRangePattern->SetValue(0);
+				perReadWriteSliderRangePattern->SetValue(0);
+				break;
+			case 1: //Seq Read
+				perSeqRanSliderRangePattern->SetValue(0);
+				perReadWriteSliderRangePattern->SetValue(100);
+				break;
+			case 2: //Ran Write
+				perSeqRanSliderRangePattern->SetValue(100);
+				perReadWriteSliderRangePattern->SetValue(0);
+				break;
+			case 3: //Ran Read
+				perSeqRanSliderRangePattern->SetValue(100);
+				perReadWriteSliderRangePattern->SetValue(100);
+				break;
+			default: //Seq Write
+				perSeqRanSliderRangePattern->SetValue(0);
+				perReadWriteSliderRangePattern->SetValue(0);
+			}
+			//AutomationElement^ okButton = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1")));
+			AutomationElement^ okButton = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::NameProperty, "OK")));
+			InvokePattern^ okButtonInvokePattern = (InvokePattern^)okButton->GetCurrentPattern(InvokePattern::Pattern);
+			okButtonInvokePattern->Invoke();
+		}
+	}
 }
