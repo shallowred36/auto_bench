@@ -16,6 +16,7 @@ namespace auto_bench {
 	using namespace System::Windows::Automation;
 	using namespace System::Windows;
 	using namespace Microsoft::Test::Input;
+	using namespace System::Threading;
 
 	/// <summary>
 	/// AutoBenchUI の概要
@@ -30,6 +31,7 @@ namespace auto_bench {
 			//
 			//TODO: ここにコンストラクター コードを追加します
 			//
+			resultsUpdateThread = nullptr;
 			IometerInitialize();
 			CDMInitialize();
 			//ASSSDInitialize();
@@ -70,6 +72,7 @@ namespace auto_bench {
 		System::Windows::Forms::Label^ iometerQueueLabel;
 		System::Windows::Forms::TextBox^ iometerQueueInput;
 		System::Windows::Forms::DataGridView^ iometerResultsDataView;
+		IEnumerator^ eachBlockSize;
 
 	//CDM-related form objects
 	private:
@@ -86,7 +89,7 @@ namespace auto_bench {
 
 	//Common properties
 	private:
-		
+		Thread^ resultsUpdateThread;
 
 	protected:
 
@@ -222,5 +225,8 @@ namespace auto_bench {
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
 		void IometerResultsConfigure(void);
 		void IometerConfigure(Process^ benchPro);
+		void StopThread(void);
+	public:
+		void UpdateThreadProc(void);
 };
 }

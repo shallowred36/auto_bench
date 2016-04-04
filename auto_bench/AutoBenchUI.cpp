@@ -274,18 +274,17 @@ void AutoBenchUI::IometerConfigure(Process^ benchPro) {
 	AutomationElement^ addButton = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1024")));
 	InvokePattern^ addButtonInvokePattern = (InvokePattern^)addButton->GetCurrentPattern(InvokePattern::Pattern);
 	array<System::String^>^ blockSizes = blockSizeInput->Text->Split(String::Format(",")->ToCharArray());
-	IEnumerator^ eachBlockSize = blockSizes->GetEnumerator();
+	eachBlockSize = blockSizes->GetEnumerator();
 	while (eachBlockSize->MoveNext()) {
 		for (int i = 0; i < 4; i++) {
 			newButtonInvokePattern->Invoke();
 			Sleep(500);
-			//MessageBox::Show(String::Format("{0}", iometerMainWindow->FindAll(TreeScope::Children, Condition::TrueCondition)->Count));
 			AutomationElement^ editAccessWindow = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "Edit Access Specification")));
 			AutomationElement^ transRequestSize = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1031")));
-			Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(transRequestSize->GetClickablePoint().X), Convert::ToInt32(transRequestSize->GetClickablePoint().Y)));
-			Mouse::Click(MouseButton::Left);
 			RangeValuePattern^ transRequestSizeRangePattern = (RangeValuePattern^)transRequestSize->GetCurrentPattern(RangeValuePattern::Pattern);
 			transRequestSizeRangePattern->SetValue(Int32::Parse((String ^)eachBlockSize->Current));
+			Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(transRequestSize->GetClickablePoint().X), Convert::ToInt32(transRequestSize->GetClickablePoint().Y)));
+			Mouse::Click(MouseButton::Left);
 
 			AutomationElement^ perSeqRanSlider = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "5001")));
 			AutomationElement^ perSeqRanSliderThumb = perSeqRanSlider->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Thumb)));
@@ -318,7 +317,6 @@ void AutoBenchUI::IometerConfigure(Process^ benchPro) {
 				Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(perReadWriteSliderThumb->GetClickablePoint().X), Convert::ToInt32(perReadWriteSliderThumb->GetClickablePoint().Y)));
 				Mouse::DragTo(MouseButton::Left, System::Drawing::Point(Convert::ToInt32(perReadWriteSlider->Current.BoundingRectangle.Right - 12), Convert::ToInt32(perReadWriteSlider->Current.BoundingRectangle.Bottom - 12)));
 			}
-			//AutomationElement^ okButton = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1")));
 			AutomationElement^ okButton = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::NameProperty, "OK")));
 			InvokePattern^ okButtonInvokePattern = (InvokePattern^)okButton->GetCurrentPattern(InvokePattern::Pattern);
 			okButtonInvokePattern->Invoke();
@@ -349,21 +347,35 @@ void AutoBenchUI::IometerConfigure(Process^ benchPro) {
 	AutomationElement^ updateFrequencyListItem = updateFrequency->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "30")));
 	SelectionItemPattern^ updateFrequencyListItemSelectPattern = (SelectionItemPattern ^)updateFrequencyListItem->GetCurrentPattern(SelectionItemPattern::Pattern);
 	updateFrequencyListItemSelectPattern->Select();
-	AutomationElement^ speedText = resultsDisplayTab->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "2101")));
-	AutomationElement^ iopsText = resultsDisplayTab->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "2100")));
 	AutomationElement^ startButton = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "Start Tests")));
 	InvokePattern^ startButtonInvokePattern = (InvokePattern^)startButton->GetCurrentPattern(InvokePattern::Pattern);
+	StopThread();
+	resultsUpdateThread = gcnew Thread(gcnew ThreadStart(this, &AutoBenchUI::UpdateThreadProc));
+	resultsUpdateThread->IsBackground = TRUE;
+	resultsUpdateThread->Start();
 	startButtonInvokePattern->Invoke();
+}
+
+void AutoBenchUI::UpdateThreadProc(void) {
+	AutomationElement^ speedText = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "2101")));
+	AutomationElement^ iopsText = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "2100")));
 	eachBlockSize->Reset();
 	int rowCount = iometerResultsDataView->RowCount;
 	while (eachBlockSize->MoveNext()) {
 		iometerResultsDataView->Rows[rowCount - 2]->Cells[0]->Value = eachBlockSize->Current;
 		for (int i = 0; i < 4; i++) {
-			Sleep(30000);
+			Thread::Sleep(30000);
 			iometerResultsDataView->Rows[rowCount - 2]->Cells[2 * i + 1]->Value = speedText->Current.Name;
 			iometerResultsDataView->Rows[rowCount - 2]->Cells[2 * i + 2]->Value = iopsText->Current.Name;
 		}
 		iometerResultsDataView->Rows->Insert(rowCount - 1, 1);
 		rowCount++;
+	}
+}
+
+void AutoBenchUI::StopThread(void) {
+	if (resultsUpdateThread != nullptr) {
+		resultsUpdateThread->Interrupt();
+		resultsUpdateThread = nullptr;
 	}
 }
