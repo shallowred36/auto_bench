@@ -69,6 +69,7 @@ namespace auto_bench {
 		System::Windows::Forms::GroupBox^ iometerQueueGroup;
 		System::Windows::Forms::Label^ iometerQueueLabel;
 		System::Windows::Forms::TextBox^ iometerQueueInput;
+		System::Windows::Forms::DataGridView^ iometerResultsDataView;
 
 	//CDM-related form objects
 	private:
@@ -219,6 +220,7 @@ namespace auto_bench {
 		void ASSSDInitialize(void);
 		System::Void checkedListBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e);
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
+		void IometerResultsConfigure(void);
 		void IometerConfigure(Process^ benchPro);
 };
 }
