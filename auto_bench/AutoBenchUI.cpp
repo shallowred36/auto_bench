@@ -15,44 +15,42 @@ System::Void AutoBenchUI::checkedListBox1_SelectedIndexChanged(System::Object^  
 		splitContainer3->Panel2->Controls->Clear();
 		ListDrives(1);
 		splitContainer3->Panel1->Controls->Add(CDMPanel);
-	}
-	else if (checkedListBox1->SelectedIndex == 2) {
-
+		splitContainer3->Panel2->Controls->Add(CDMResultsDataView);
 	}
 }
 
 System::Void AutoBenchUI::button1_Click(System::Object^  sender, System::EventArgs^  e) {
 	IEnumerator^ benchEnum = checkedListBox1->CheckedIndices->GetEnumerator();
+	safe_cast<Button^>(sender)->Enabled = false;
 	while (benchEnum->MoveNext()) {
 		Int32 indexChecked = *safe_cast<Int32^>(benchEnum->Current);
 		if (indexChecked == 0) {
-			Process^ iometerProcess = gcnew Process;
+			checkedListBox1->SetSelected(0, true);
+			iometerProcess = gcnew Process;
 			ProcessStartInfo^ iometerProcessStartInfo = gcnew ProcessStartInfo;
 			iometerProcessStartInfo->FileName = "iometer\\IOmeter.exe";
 			iometerProcess->StartInfo = iometerProcessStartInfo;
 			iometerProcess->Start();
 			iometerProcess->WaitForInputIdle();
 			IometerResultsConfigure();
-			IometerConfigure(iometerProcess);
-			//iometerProcess->CloseMainWindow();
-			//iometerProcess->Close();
+			IometerConfigure();
+			iometerProcess->WaitForExit();
 		}
 		else if (indexChecked == 1) {
-			Process^ cdmProcess = gcnew Process;
+			checkedListBox1->SetSelected(1, true);
+			cdmProcess = gcnew Process;
 			ProcessStartInfo^ cdmProcessStartInfo = gcnew ProcessStartInfo;
 			cdmProcessStartInfo->FileName = "CDM\\DiskMark32.exe";
 			cdmProcess->StartInfo = cdmProcessStartInfo;
 			cdmProcess->Start();
 			cdmProcess->WaitForInputIdle();
-			//cdmProcess->CloseMainWindow();
-			//cdmProcess->Close();
+			CDMResultsConfigure();
+			CDMConfigure();
+			cdmProcess->WaitForExit();
 		}
 	}
+	safe_cast<Button^>(sender)->Enabled = true;
 }
-
-/*System::Void AutoBenchUI::groupBox_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
-
-}*/
 
 void AutoBenchUI::ListDrives(int index) {
 	TCHAR szDrives[256] = { 0 };
@@ -66,7 +64,8 @@ void AutoBenchUI::ListDrives(int index) {
 	while (pDrive[0] != _T('\0')) {
 		int result = GetDriveType(pDrive);
 		int forward = (int)_tcslen(pDrive);
-		if (result == DRIVE_FIXED || result == DRIVE_REMOTE || result == DRIVE_REMOVABLE || result == DRIVE_RAMDISK) {
+		//if (result == DRIVE_FIXED || result == DRIVE_REMOTE || result == DRIVE_REMOVABLE || result == DRIVE_RAMDISK) {
+		if (result == DRIVE_FIXED) {
 			if (index == 0)
 				iometerTargetCombo->Items->Add(String::Format("{0}:", pDrive[0]));
 			else if (index == 1)
@@ -104,7 +103,6 @@ void AutoBenchUI::IometerInitialize(void) {
 	blockSizeGroup->Height = 40;
 	blockSizeGroup->Width = 100;
 	blockSizeGroup->Location = System::Drawing::Point(0, 150);
-	//blockSizeGroup->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &AutoBenchUI::groupBox_Paint);
 	blockSizeGroup->Controls->Add(blockSizeLabel);
 	blockSizeGroup->Controls->Add(blockSizeUnitLabel);
 	blockSizeGroup->Controls->Add(blockSizeInput);
@@ -150,6 +148,7 @@ void AutoBenchUI::IometerInitialize(void) {
 	iometerResultsDataView->RowCount = 2;
 	iometerResultsDataView->Width = 470;
 	iometerResultsDataView->Height = 450;
+	iometerResultsDataView->ReadOnly = true;
 }
 
 void AutoBenchUI::CDMInitialize(void) {
@@ -166,9 +165,6 @@ void AutoBenchUI::CDMInitialize(void) {
 	CDMQueueCombo = (gcnew System::Windows::Forms::ComboBox());
 	dataSizeLabel->Text = "Data size";
 	dataSizeLabel->AutoSize = true;
-	//dataSizeCombo->Anchor = (System::Windows::Forms::AnchorStyles)(
-	//	(System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) |
-	//	System::Windows::Forms::AnchorStyles::Right);
 	array<Object ^>^ sizeArray = { "50MiB", "100MiB", "500MiB", "1GiB", "2GiB", "4GiB", "8GiB", "16GiB", "32GiB" };
 	dataSizeCombo->Items->AddRange(sizeArray);
 	dataSizeCombo->Location = System::Drawing::Point(5, 15);
@@ -203,10 +199,49 @@ void AutoBenchUI::CDMInitialize(void) {
 	CDMPanel->Controls->Add(dataSizeGroup);
 	CDMPanel->Controls->Add(CDMTargetGroup);
 	CDMPanel->Controls->Add(CDMQueueGroup);
+	CDMResultsDataView = (gcnew System::Windows::Forms::DataGridView());
+	CDMResultsDataView->ColumnCount = 8;
+	CDMResultsDataView->RowCount = 2;
+	CDMResultsDataView->Width = 470;
+	CDMResultsDataView->Height = 450;
+	CDMResultsDataView->ReadOnly = true;
 }
 
-void AutoBenchUI::ASSSDInitialize(void) {
+void AutoBenchUI::CDMResultsConfigure(void) {
+	int rowCount = CDMResultsDataView->RowCount;
+	CDMResultsDataView->Rows[rowCount - 2]->Cells[1]->Value = "Target:";
+	CDMResultsDataView->Rows[rowCount - 2]->Cells[2]->Value = CDMTargetCombo->Text;
+	CDMResultsDataView->Rows[rowCount - 2]->Cells[3]->Value = "Data size:";
+	CDMResultsDataView->Rows[rowCount - 2]->Cells[4]->Value = dataSizeCombo->Text;
+	CDMResultsDataView->Rows[rowCount - 2]->Cells[5]->Value = "Thread:";
+	CDMResultsDataView->Rows[rowCount - 2]->Cells[6]->Value = "1";
+	CDMResultsDataView->Rows[rowCount - 2]->Cells[7]->Value = "’PˆÊFMB/s";
+	CDMResultsDataView->Rows->Insert(rowCount - 1, 1);
+	CDMResultsDataView->Rows[rowCount - 1]->Cells[0]->Value = "Seq. Read(BS=128KiB,Q=" + CDMQueueCombo->Text + ")";
+	CDMResultsDataView->Rows[rowCount - 1]->Cells[1]->Value = "Seq. Write(BS=128KiB,Q=" + CDMQueueCombo->Text + ")";
+	CDMResultsDataView->Rows[rowCount - 1]->Cells[2]->Value = "Ran. Read(BS=4KiB,Q=" + CDMQueueCombo->Text + ")";
+	CDMResultsDataView->Rows[rowCount - 1]->Cells[3]->Value = "Ran. Write(BS=4KiB,Q=" + CDMQueueCombo->Text + ")";
+	CDMResultsDataView->Rows[rowCount - 1]->Cells[4]->Value = "Seq. Read(BS=1MiB,Q=1)";
+	CDMResultsDataView->Rows[rowCount - 1]->Cells[5]->Value = "Seq. Write(BS=1MiB,Q=1)";
+	CDMResultsDataView->Rows[rowCount - 1]->Cells[6]->Value = "Ran. Read(BS=1MiB,Q=1)";
+	CDMResultsDataView->Rows[rowCount - 1]->Cells[7]->Value = "Ran. Write(BS=1MiB,Q=1)";
+	CDMResultsDataView->Rows->Insert(rowCount, 1);
+}
 
+void AutoBenchUI::CDMConfigure(void) {
+	AutomationElement^ languageSelect = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 5")));
+	if (!languageSelect) {
+		MessageBox::Show("not found");
+		return;
+	}
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(languageSelect->GetClickablePoint().X), Convert::ToInt32(languageSelect->GetClickablePoint().Y)));
+	Mouse::Click(MouseButton::Left);
+	/*AutomationElement^ languageSubSelect = languageSelect->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 1")));
+	ExpandCollapsePattern^ languageSubSelectECPattern = (ExpandCollapsePattern^)languageSubSelect->GetCurrentPattern(ExpandCollapsePattern::Pattern);
+	languageSubSelectECPattern->Expand();
+	AutomationElement^ englishSelect = languageSubSelect->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 38921")));
+	InvokePattern^ englishSelectInvokePattern = (InvokePattern^)englishSelect->GetCurrentPattern(InvokePattern::Pattern);
+	englishSelectInvokePattern->Invoke();*/
 }
 
 void AutoBenchUI::IometerResultsConfigure(void) {
@@ -219,20 +254,18 @@ void AutoBenchUI::IometerResultsConfigure(void) {
 	iometerResultsDataView->Rows[rowCount - 2]->Cells[6]->Value = iometerQueueInput->Text;
 	iometerResultsDataView->Rows->Insert(rowCount - 1, 1);
 	iometerResultsDataView->Rows[rowCount - 1]->Cells[0]->Value = "Block size (KiB)";
-	iometerResultsDataView->Rows[rowCount - 1]->Cells[1]->Value = "Seq. Write (MiB/s)";
+	iometerResultsDataView->Rows[rowCount - 1]->Cells[1]->Value = "Seq. Write";
 	iometerResultsDataView->Rows[rowCount - 1]->Cells[2]->Value = "Seq. Write (IOPS)";
-	iometerResultsDataView->Rows[rowCount - 1]->Cells[3]->Value = "Seq. Read (MiB/s)";
+	iometerResultsDataView->Rows[rowCount - 1]->Cells[3]->Value = "Seq. Read";
 	iometerResultsDataView->Rows[rowCount - 1]->Cells[4]->Value = "Seq. Read (IOPS)";
-	iometerResultsDataView->Rows[rowCount - 1]->Cells[5]->Value = "Ran. Write (MiB/s)";
+	iometerResultsDataView->Rows[rowCount - 1]->Cells[5]->Value = "Ran. Write";
 	iometerResultsDataView->Rows[rowCount - 1]->Cells[6]->Value = "Ran. Read (IOPS)";
-	iometerResultsDataView->Rows[rowCount - 1]->Cells[7]->Value = "Ran. Write (MiB/s)";
+	iometerResultsDataView->Rows[rowCount - 1]->Cells[7]->Value = "Ran. Write";
 	iometerResultsDataView->Rows[rowCount - 1]->Cells[8]->Value = "Ran. Read (IOPS)";
 	iometerResultsDataView->Rows->Insert(rowCount, 1);
 }
 
-void AutoBenchUI::IometerConfigure(Process^ benchPro) {
-	//AutomationElement^ mainWin = AutomationElement::RootElement->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::ProcessIdProperty, benchPro->Id)));
-	//AutomationElement^ iometerMainWindow = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "Iometer")));
+void AutoBenchUI::IometerConfigure(void) {
 	AutomationElement^ allManagersTree = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "All Managers")));
 	ExpandCollapsePattern^ allManagersTreePattern = (ExpandCollapsePattern ^)allManagersTree->GetCurrentPattern(ExpandCollapsePattern::Pattern);
 	allManagersTreePattern->Expand();
@@ -340,13 +373,13 @@ void AutoBenchUI::IometerConfigure(Process^ benchPro) {
 	AutomationElement^ resultsDisplayTab = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "Results Display")));
 	SelectionItemPattern^ resultsDisplayTabSelectPattern = (SelectionItemPattern ^)resultsDisplayTab->GetCurrentPattern(SelectionItemPattern::Pattern);
 	resultsDisplayTabSelectPattern->Select();
-	AutomationElement^ lastUpdate = resultsDisplayTab->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1105")));
+	/*AutomationElement^ lastUpdate = resultsDisplayTab->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1105")));
 	SelectionItemPattern^ lastUpdateSelectPattern = (SelectionItemPattern ^)lastUpdate->GetCurrentPattern(SelectionItemPattern::Pattern);
 	lastUpdateSelectPattern->Select();
 	AutomationElement^ updateFrequency = resultsDisplayTab->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1121")));
 	AutomationElement^ updateFrequencyListItem = updateFrequency->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "30")));
 	SelectionItemPattern^ updateFrequencyListItemSelectPattern = (SelectionItemPattern ^)updateFrequencyListItem->GetCurrentPattern(SelectionItemPattern::Pattern);
-	updateFrequencyListItemSelectPattern->Select();
+	updateFrequencyListItemSelectPattern->Select();*/
 	AutomationElement^ startButton = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "Start Tests")));
 	InvokePattern^ startButtonInvokePattern = (InvokePattern^)startButton->GetCurrentPattern(InvokePattern::Pattern);
 	StopThread();
@@ -359,17 +392,50 @@ void AutoBenchUI::IometerConfigure(Process^ benchPro) {
 void AutoBenchUI::UpdateThreadProc(void) {
 	AutomationElement^ speedText = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "2101")));
 	AutomationElement^ iopsText = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "2100")));
-	eachBlockSize->Reset();
+	AutomationElement^ testStatus0 = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "StatusBar.Pane0")));
+	AutomationElement^ testStatus1 = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "StatusBar.Pane1")));
+	AutomationElement^ testStatus2 = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "StatusBar.Pane2")));
 	int rowCount = iometerResultsDataView->RowCount;
-	while (eachBlockSize->MoveNext()) {
-		iometerResultsDataView->Rows[rowCount - 2]->Cells[0]->Value = eachBlockSize->Current;
-		for (int i = 0; i < 4; i++) {
-			Thread::Sleep(30000);
-			iometerResultsDataView->Rows[rowCount - 2]->Cells[2 * i + 1]->Value = speedText->Current.Name;
-			iometerResultsDataView->Rows[rowCount - 2]->Cells[2 * i + 2]->Value = iopsText->Current.Name;
+	eachBlockSize->Reset();
+	eachBlockSize->MoveNext();
+	while (true) {
+		Thread::Sleep(20000);
+		if (testStatus0->Current.Name->Equals("Test Completed Successfully")) {
+			iometerResultsDataView->Rows[rowCount - 2]->Cells[7]->Value = speedText->Current.Name;
+			iometerResultsDataView->Rows[rowCount - 2]->Cells[8]->Value = iopsText->Current.Name;
+			iometerResultsDataView->Rows[rowCount - 2]->Cells[0]->Value = eachBlockSize->Current;
+			iometerResultsDataView->Rows->Insert(rowCount - 1, 1);
+			iometerProcess->CloseMainWindow();
+			iometerProcess->Close();
+			return;
 		}
-		iometerResultsDataView->Rows->Insert(rowCount - 1, 1);
-		rowCount++;
+		if (!testStatus1->Current.Name->Equals("Preparing Drives")) {
+			Match^ testNum = Regex::Match(testStatus2->Current.Name, "Run\\s+(.+)\\s+of");
+			int currentTest = Int32::Parse(testNum->Groups[1]->Value);
+			if (currentTest != 1) {
+				switch (currentTest % 4) {
+				case 0:
+					iometerResultsDataView->Rows[rowCount - 2]->Cells[5]->Value = speedText->Current.Name;
+					iometerResultsDataView->Rows[rowCount - 2]->Cells[6]->Value = iopsText->Current.Name;
+					break;
+				case 1:
+					iometerResultsDataView->Rows[rowCount - 2]->Cells[7]->Value = speedText->Current.Name;
+					iometerResultsDataView->Rows[rowCount - 2]->Cells[8]->Value = iopsText->Current.Name;
+					iometerResultsDataView->Rows[rowCount - 2]->Cells[0]->Value = eachBlockSize->Current;
+					eachBlockSize->MoveNext();
+					iometerResultsDataView->Rows->Insert(rowCount - 1, 1);
+					rowCount++;
+					break;
+				case 2:
+					iometerResultsDataView->Rows[rowCount - 2]->Cells[1]->Value = speedText->Current.Name;
+					iometerResultsDataView->Rows[rowCount - 2]->Cells[2]->Value = iopsText->Current.Name;
+					break;
+				case 3:
+					iometerResultsDataView->Rows[rowCount - 2]->Cells[3]->Value = speedText->Current.Name;
+					iometerResultsDataView->Rows[rowCount - 2]->Cells[4]->Value = iopsText->Current.Name;
+				}
+			}
+		}
 	}
 }
 

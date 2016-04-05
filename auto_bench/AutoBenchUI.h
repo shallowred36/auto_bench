@@ -17,6 +17,7 @@ namespace auto_bench {
 	using namespace System::Windows;
 	using namespace Microsoft::Test::Input;
 	using namespace System::Threading;
+	using namespace System::Text::RegularExpressions;
 
 	/// <summary>
 	/// AutoBenchUI ‚ÌŠT—v
@@ -73,6 +74,7 @@ namespace auto_bench {
 		System::Windows::Forms::TextBox^ iometerQueueInput;
 		System::Windows::Forms::DataGridView^ iometerResultsDataView;
 		IEnumerator^ eachBlockSize;
+		Process^ iometerProcess;
 
 	//CDM-related form objects
 	private:
@@ -86,6 +88,8 @@ namespace auto_bench {
 		System::Windows::Forms::GroupBox^ CDMQueueGroup;
 		System::Windows::Forms::Label^ CDMQueueLabel;
 		System::Windows::Forms::ComboBox^ CDMQueueCombo;
+		System::Windows::Forms::DataGridView^ CDMResultsDataView;
+		Process^ cdmProcess;
 
 	//Common properties
 	private:
@@ -149,7 +153,7 @@ namespace auto_bench {
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(40, 23);
 			this->button1->TabIndex = 0;
-			this->button1->Text = L"Start";
+			this->button1->Text = L"ŠJŽn";
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &AutoBenchUI::button1_Click);
 			// 
@@ -220,11 +224,12 @@ namespace auto_bench {
 		void ListDrives(int index);
 		void IometerInitialize(void);
 		void CDMInitialize(void);
-		void ASSSDInitialize(void);
 		System::Void checkedListBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e);
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
 		void IometerResultsConfigure(void);
-		void IometerConfigure(Process^ benchPro);
+		void IometerConfigure(void);
+		void CDMResultsConfigure(void);
+		void CDMConfigure(void);
 		void StopThread(void);
 	public:
 		void UpdateThreadProc(void);
