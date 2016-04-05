@@ -229,19 +229,22 @@ void AutoBenchUI::CDMResultsConfigure(void) {
 }
 
 void AutoBenchUI::CDMConfigure(void) {
+	Sleep(500);
 	AutomationElement^ languageSelect = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 5")));
-	if (!languageSelect) {
-		MessageBox::Show("not found");
-		return;
-	}
-	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(languageSelect->GetClickablePoint().X), Convert::ToInt32(languageSelect->GetClickablePoint().Y)));
-	Mouse::Click(MouseButton::Left);
-	/*AutomationElement^ languageSubSelect = languageSelect->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 1")));
+	ExpandCollapsePattern^ languageSelectECPattern = (ExpandCollapsePattern^)languageSelect->GetCurrentPattern(ExpandCollapsePattern::Pattern);
+	languageSelectECPattern->Expand();
+	AutomationElement^ languageSubSelect = languageSelect->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 1")));
 	ExpandCollapsePattern^ languageSubSelectECPattern = (ExpandCollapsePattern^)languageSubSelect->GetCurrentPattern(ExpandCollapsePattern::Pattern);
 	languageSubSelectECPattern->Expand();
 	AutomationElement^ englishSelect = languageSubSelect->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 38921")));
 	InvokePattern^ englishSelectInvokePattern = (InvokePattern^)englishSelect->GetCurrentPattern(InvokePattern::Pattern);
-	englishSelectInvokePattern->Invoke();*/
+	englishSelectInvokePattern->Invoke();
+	AutomationElement^ queueSetting = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 2")));
+	ExpandCollapsePattern^ queueSettingECPattern = (ExpandCollapsePattern^)queueSetting->GetCurrentPattern(ExpandCollapsePattern::Pattern);
+	queueSettingECPattern->Expand();
+	AutomationElement^ queueSettingMenu = queueSetting->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 32818")));
+	InvokePattern^ queueSettingMenuInvokePattern = (InvokePattern^)queueSettingMenu->GetCurrentPattern(InvokePattern::Pattern);
+	queueSettingMenuInvokePattern->Invoke();
 }
 
 void AutoBenchUI::IometerResultsConfigure(void) {
