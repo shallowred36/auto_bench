@@ -35,7 +35,6 @@ namespace auto_bench {
 			resultsUpdateThread = nullptr;
 			IometerInitialize();
 			CDMInitialize();
-			//ASSSDInitialize();
 		}
 
 	protected:
@@ -201,7 +200,7 @@ namespace auto_bench {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(700, 500);
+			this->ClientSize = System::Drawing::Size(1130, 500);
 			this->Controls->Add(this->splitContainer1);
 			this->Name = L"AutoBenchUI";
 			this->Text = L"Automatic Benchmark Launcher";
@@ -233,5 +232,6 @@ namespace auto_bench {
 		void StopThread(void);
 	public:
 		void UpdateThreadProc(void);
+		void CDMUpdateThreadProc(void);
 };
 }

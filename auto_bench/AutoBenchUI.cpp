@@ -146,9 +146,11 @@ void AutoBenchUI::IometerInitialize(void) {
 	iometerResultsDataView = (gcnew System::Windows::Forms::DataGridView());
 	iometerResultsDataView->ColumnCount = 9;
 	iometerResultsDataView->RowCount = 2;
-	iometerResultsDataView->Width = 470;
+	iometerResultsDataView->Width = 903;
 	iometerResultsDataView->Height = 450;
 	iometerResultsDataView->ReadOnly = true;
+	iometerResultsDataView->RowHeadersVisible = false;
+	iometerResultsDataView->ColumnHeadersVisible = false;
 }
 
 void AutoBenchUI::CDMInitialize(void) {
@@ -202,9 +204,11 @@ void AutoBenchUI::CDMInitialize(void) {
 	CDMResultsDataView = (gcnew System::Windows::Forms::DataGridView());
 	CDMResultsDataView->ColumnCount = 8;
 	CDMResultsDataView->RowCount = 2;
-	CDMResultsDataView->Width = 470;
+	CDMResultsDataView->Width = 803;
 	CDMResultsDataView->Height = 450;
 	CDMResultsDataView->ReadOnly = true;
+	CDMResultsDataView->RowHeadersVisible = false;
+	CDMResultsDataView->ColumnHeadersVisible = false;
 }
 
 void AutoBenchUI::CDMResultsConfigure(void) {
@@ -230,7 +234,8 @@ void AutoBenchUI::CDMResultsConfigure(void) {
 
 void AutoBenchUI::CDMConfigure(void) {
 	Sleep(500);
-	AutomationElement^ languageSelect = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 5")));
+	AutomationElement^ languageSelect = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 5"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::MenuItem)));
 	ExpandCollapsePattern^ languageSelectECPattern = (ExpandCollapsePattern^)languageSelect->GetCurrentPattern(ExpandCollapsePattern::Pattern);
 	languageSelectECPattern->Expand();
 	AutomationElement^ languageSubSelect = languageSelect->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 1")));
@@ -239,12 +244,79 @@ void AutoBenchUI::CDMConfigure(void) {
 	AutomationElement^ englishSelect = languageSubSelect->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 38921")));
 	InvokePattern^ englishSelectInvokePattern = (InvokePattern^)englishSelect->GetCurrentPattern(InvokePattern::Pattern);
 	englishSelectInvokePattern->Invoke();
-	AutomationElement^ queueSetting = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 2")));
+	AutomationElement^ queueSetting = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 2"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::MenuItem)));
 	ExpandCollapsePattern^ queueSettingECPattern = (ExpandCollapsePattern^)queueSetting->GetCurrentPattern(ExpandCollapsePattern::Pattern);
 	queueSettingECPattern->Expand();
 	AutomationElement^ queueSettingMenu = queueSetting->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 32818")));
 	InvokePattern^ queueSettingMenuInvokePattern = (InvokePattern^)queueSettingMenu->GetCurrentPattern(InvokePattern::Pattern);
 	queueSettingMenuInvokePattern->Invoke();
+	AutomationElement^ queueSettingWindow = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Queues & Threads"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Pane), gcnew PropertyCondition(AutomationElement::ProcessIdProperty, cdmProcess->Id)));
+	AutomationElementCollection^ queueThreadSettings = queueSettingWindow->FindAll(TreeScope::Descendants, gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button));
+	AutomationElementCollection^ queueThreadSettingsCombo = queueSettingWindow->FindAll(TreeScope::Descendants, gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::ComboBox));
+	safe_cast<InvokePattern^>(queueThreadSettings[0]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
+	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[0]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(CDMQueueCombo->Text)) Keyboard::Type(String::Format("{0}", CDMQueueCombo->Text[0]));
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(queueSettingWindow->GetClickablePoint().X), Convert::ToInt32(queueSettingWindow->GetClickablePoint().Y)));
+	Mouse::Click(MouseButton::Left);
+	safe_cast<InvokePattern^>(queueThreadSettings[0]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
+	safe_cast<InvokePattern^>(queueThreadSettings[1]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
+	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[1]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("1")) Keyboard::Type("1");
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(queueSettingWindow->GetClickablePoint().X), Convert::ToInt32(queueSettingWindow->GetClickablePoint().Y)));
+	Mouse::Click(MouseButton::Left);
+	safe_cast<InvokePattern^>(queueThreadSettings[1]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
+	safe_cast<InvokePattern^>(queueThreadSettings[2]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
+	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[2]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(CDMQueueCombo->Text)) Keyboard::Type(String::Format("{0}", CDMQueueCombo->Text[0]));
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(queueSettingWindow->GetClickablePoint().X), Convert::ToInt32(queueSettingWindow->GetClickablePoint().Y)));
+	Mouse::Click(MouseButton::Left);
+	safe_cast<InvokePattern^>(queueThreadSettings[2]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
+	safe_cast<InvokePattern^>(queueThreadSettings[3]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
+	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[3]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("1")) Keyboard::Type("1");
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(queueSettingWindow->GetClickablePoint().X), Convert::ToInt32(queueSettingWindow->GetClickablePoint().Y)));
+	Mouse::Click(MouseButton::Left);
+	safe_cast<InvokePattern^>(queueThreadSettings[3]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
+	AutomationElement^ queueSettingWindowTitle = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Queues & Threads"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::TitleBar), gcnew PropertyCondition(AutomationElement::ProcessIdProperty, cdmProcess->Id)));
+	AutomationElement^ queueSettingWindowClose = queueSettingWindowTitle->FindFirst(TreeScope::Descendants, gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Close"));
+	InvokePattern^ queueSettingWindowCloseInvokePattern = (InvokePattern^)queueSettingWindowClose->GetCurrentPattern(InvokePattern::Pattern);
+	queueSettingWindowCloseInvokePattern->Invoke();
+	AutomationElement^ testCount = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Test Count"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::ComboBox)));
+	AutomationElement^ testCountButton = testCount->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button)));
+	InvokePattern^ testCountButtonInvokePattern = (InvokePattern^)testCountButton->GetCurrentPattern(InvokePattern::Pattern);
+	testCountButtonInvokePattern->Invoke();
+	while (!safe_cast<ValuePattern^>(testCount->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("5")) Keyboard::Type(String::Format("5"));
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testCountButton->GetClickablePoint().X), Convert::ToInt32(testCountButton->GetClickablePoint().Y)));
+	Mouse::Click(MouseButton::Left);
+	testCountButtonInvokePattern->Invoke();
+	AutomationElement^ testSize = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Test Size"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::ComboBox)));
+	AutomationElement^ testSizeButton = testSize->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button)));
+	InvokePattern^ testSizeButtonInvokePattern = (InvokePattern^)testSizeButton->GetCurrentPattern(InvokePattern::Pattern);
+	testSizeButtonInvokePattern->Invoke();
+	while (!safe_cast<ValuePattern^>(testSize->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(dataSizeCombo->Text)) Keyboard::Type(String::Format("{0}", dataSizeCombo->Text[0]));
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testSizeButton->GetClickablePoint().X), Convert::ToInt32(testSizeButton->GetClickablePoint().Y)));
+	Mouse::Click(MouseButton::Left);
+	testSizeButtonInvokePattern->Invoke();
+	AutomationElement^ testDrive = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Test Drive"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::ComboBox)));
+	AutomationElement^ testDriveButton = testDrive->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button)));
+	InvokePattern^ testDriveButtonInvokePattern = (InvokePattern^)testDriveButton->GetCurrentPattern(InvokePattern::Pattern);
+	testDriveButtonInvokePattern->Invoke();
+	while (!safe_cast<ValuePattern^>(testDrive->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Contains(CDMTargetCombo->Text)) Keyboard::Type(String::Format("{0}", CDMTargetCombo->Text[0]));
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testDriveButton->GetClickablePoint().X), Convert::ToInt32(testDriveButton->GetClickablePoint().Y)));
+	Mouse::Click(MouseButton::Left);
+	testDriveButtonInvokePattern->Invoke();
+	AutomationElement^ mainMenu = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "CrystalDiskMark"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Pane)));
+	AutomationElement^ startButton = mainMenu->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "All"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Hyperlink)));
+	InvokePattern^ startButtonInvokePattern = (InvokePattern^)startButton->GetCurrentPattern(InvokePattern::Pattern);
+	StopThread();
+	resultsUpdateThread = gcnew Thread(gcnew ThreadStart(this, &AutoBenchUI::CDMUpdateThreadProc));
+	resultsUpdateThread->IsBackground = TRUE;
+	resultsUpdateThread->Start();
+	startButtonInvokePattern->Invoke();
 }
 
 void AutoBenchUI::IometerResultsConfigure(void) {
@@ -390,6 +462,34 @@ void AutoBenchUI::IometerConfigure(void) {
 	resultsUpdateThread->IsBackground = TRUE;
 	resultsUpdateThread->Start();
 	startButtonInvokePattern->Invoke();
+}
+
+void AutoBenchUI::CDMUpdateThreadProc(void) {
+	AutomationElement^ mainMenu = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "CrystalDiskMark"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Pane)));
+	AutomationElement^ stopButton;
+	int rowCount = CDMResultsDataView->RowCount;
+	Thread::Sleep(1000);
+	stopButton = mainMenu->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Stop"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Hyperlink)));
+	while (true) {
+		Thread::Sleep(20000);
+		if (stopButton->Current.Name->Equals("All")) {
+			AutomationElementCollection^ resultsCollection = mainMenu->FindAll(TreeScope::Descendants, gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Text));
+			CDMResultsDataView->Rows[rowCount - 2]->Cells[0]->Value = resultsCollection[8]->Current.Name;
+			CDMResultsDataView->Rows[rowCount - 2]->Cells[1]->Value = resultsCollection[9]->Current.Name;
+			CDMResultsDataView->Rows[rowCount - 2]->Cells[2]->Value = resultsCollection[12]->Current.Name;
+			CDMResultsDataView->Rows[rowCount - 2]->Cells[3]->Value = resultsCollection[13]->Current.Name;
+			CDMResultsDataView->Rows[rowCount - 2]->Cells[4]->Value = resultsCollection[15]->Current.Name;
+			CDMResultsDataView->Rows[rowCount - 2]->Cells[5]->Value = resultsCollection[16]->Current.Name;
+			CDMResultsDataView->Rows[rowCount - 2]->Cells[6]->Value = resultsCollection[18]->Current.Name;
+			CDMResultsDataView->Rows[rowCount - 2]->Cells[7]->Value = resultsCollection[19]->Current.Name;
+			CDMResultsDataView->Rows->Insert(rowCount - 1);
+			cdmProcess->CloseMainWindow();
+			cdmProcess->Close();
+			return;
+		}
+	}
 }
 
 void AutoBenchUI::UpdateThreadProc(void) {
