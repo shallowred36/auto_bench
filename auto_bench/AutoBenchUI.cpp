@@ -251,6 +251,7 @@ void AutoBenchUI::CDMConfigure(void) {
 	AutomationElement^ queueSettingMenu = queueSetting->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Item 32818")));
 	InvokePattern^ queueSettingMenuInvokePattern = (InvokePattern^)queueSettingMenu->GetCurrentPattern(InvokePattern::Pattern);
 	queueSettingMenuInvokePattern->Invoke();
+	Sleep(500);
 	AutomationElement^ queueSettingWindow = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Queues & Threads"),
 		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Pane), gcnew PropertyCondition(AutomationElement::ProcessIdProperty, cdmProcess->Id)));
 	AutomationElementCollection^ queueThreadSettings = queueSettingWindow->FindAll(TreeScope::Descendants, gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button));
@@ -280,13 +281,17 @@ void AutoBenchUI::CDMConfigure(void) {
 	AutomationElement^ queueSettingWindowClose = queueSettingWindowTitle->FindFirst(TreeScope::Descendants, gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "Close"));
 	InvokePattern^ queueSettingWindowCloseInvokePattern = (InvokePattern^)queueSettingWindowClose->GetCurrentPattern(InvokePattern::Pattern);
 	queueSettingWindowCloseInvokePattern->Invoke();
+	Sleep(500);
+	AutomationElement^ titleBar = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "TitleBar"),
+		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::TitleBar), gcnew PropertyCondition(AutomationElement::ProcessIdProperty, cdmProcess->Id)));
 	AutomationElement^ testCount = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Test Count"),
 		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::ComboBox)));
 	AutomationElement^ testCountButton = testCount->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button)));
 	InvokePattern^ testCountButtonInvokePattern = (InvokePattern^)testCountButton->GetCurrentPattern(InvokePattern::Pattern);
 	testCountButtonInvokePattern->Invoke();
 	while (!safe_cast<ValuePattern^>(testCount->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("5")) Keyboard::Type(String::Format("5"));
-	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testCountButton->GetClickablePoint().X), Convert::ToInt32(testCountButton->GetClickablePoint().Y)));
+	//Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testCountButton->GetClickablePoint().X), Convert::ToInt32(testCountButton->GetClickablePoint().Y)));
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(titleBar->GetClickablePoint().X), Convert::ToInt32(titleBar->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
 	testCountButtonInvokePattern->Invoke();
 	AutomationElement^ testSize = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Test Size"),
@@ -295,7 +300,8 @@ void AutoBenchUI::CDMConfigure(void) {
 	InvokePattern^ testSizeButtonInvokePattern = (InvokePattern^)testSizeButton->GetCurrentPattern(InvokePattern::Pattern);
 	testSizeButtonInvokePattern->Invoke();
 	while (!safe_cast<ValuePattern^>(testSize->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(dataSizeCombo->Text)) Keyboard::Type(String::Format("{0}", dataSizeCombo->Text[0]));
-	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testSizeButton->GetClickablePoint().X), Convert::ToInt32(testSizeButton->GetClickablePoint().Y)));
+	//Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testSizeButton->GetClickablePoint().X), Convert::ToInt32(testSizeButton->GetClickablePoint().Y)));
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(titleBar->GetClickablePoint().X), Convert::ToInt32(titleBar->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
 	testSizeButtonInvokePattern->Invoke();
 	AutomationElement^ testDrive = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Test Drive"),
@@ -304,7 +310,8 @@ void AutoBenchUI::CDMConfigure(void) {
 	InvokePattern^ testDriveButtonInvokePattern = (InvokePattern^)testDriveButton->GetCurrentPattern(InvokePattern::Pattern);
 	testDriveButtonInvokePattern->Invoke();
 	while (!safe_cast<ValuePattern^>(testDrive->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Contains(CDMTargetCombo->Text)) Keyboard::Type(String::Format("{0}", CDMTargetCombo->Text[0]));
-	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testDriveButton->GetClickablePoint().X), Convert::ToInt32(testDriveButton->GetClickablePoint().Y)));
+	//Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testDriveButton->GetClickablePoint().X), Convert::ToInt32(testDriveButton->GetClickablePoint().Y)));
+	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(titleBar->GetClickablePoint().X), Convert::ToInt32(titleBar->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
 	testDriveButtonInvokePattern->Invoke();
 	AutomationElement^ mainMenu = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "CrystalDiskMark"),
