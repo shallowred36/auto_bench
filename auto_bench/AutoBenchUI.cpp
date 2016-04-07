@@ -29,6 +29,7 @@ System::Void AutoBenchUI::button1_Click(System::Object^  sender, System::EventAr
 			iometerProcess = gcnew Process;
 			ProcessStartInfo^ iometerProcessStartInfo = gcnew ProcessStartInfo;
 			iometerProcessStartInfo->FileName = "iometer\\IOmeter.exe";
+			iometerProcessStartInfo->Verb = "runas";
 			iometerProcess->StartInfo = iometerProcessStartInfo;
 			iometerProcess->Start();
 			iometerProcess->WaitForInputIdle();
@@ -41,6 +42,7 @@ System::Void AutoBenchUI::button1_Click(System::Object^  sender, System::EventAr
 			cdmProcess = gcnew Process;
 			ProcessStartInfo^ cdmProcessStartInfo = gcnew ProcessStartInfo;
 			cdmProcessStartInfo->FileName = "CDM\\DiskMark32.exe";
+			cdmProcessStartInfo->Verb = "runas";
 			cdmProcess->StartInfo = cdmProcessStartInfo;
 			cdmProcess->Start();
 			cdmProcess->WaitForInputIdle();
@@ -257,22 +259,34 @@ void AutoBenchUI::CDMConfigure(void) {
 	AutomationElementCollection^ queueThreadSettings = queueSettingWindow->FindAll(TreeScope::Descendants, gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button));
 	AutomationElementCollection^ queueThreadSettingsCombo = queueSettingWindow->FindAll(TreeScope::Descendants, gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::ComboBox));
 	safe_cast<InvokePattern^>(queueThreadSettings[0]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
-	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[0]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(CDMQueueCombo->Text)) Keyboard::Type(String::Format("{0}", CDMQueueCombo->Text[0]));
+	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[0]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(CDMQueueCombo->Text)) {
+		Keyboard::Type(String::Format("{0}", CDMQueueCombo->Text[0]));
+		Sleep(500);
+	}
 	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(queueSettingWindow->GetClickablePoint().X), Convert::ToInt32(queueSettingWindow->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
 	safe_cast<InvokePattern^>(queueThreadSettings[0]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
 	safe_cast<InvokePattern^>(queueThreadSettings[1]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
-	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[1]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("1")) Keyboard::Type("1");
+	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[1]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("1")) {
+		Keyboard::Type("1");
+		Sleep(500);
+	}
 	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(queueSettingWindow->GetClickablePoint().X), Convert::ToInt32(queueSettingWindow->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
 	safe_cast<InvokePattern^>(queueThreadSettings[1]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
 	safe_cast<InvokePattern^>(queueThreadSettings[2]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
-	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[2]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(CDMQueueCombo->Text)) Keyboard::Type(String::Format("{0}", CDMQueueCombo->Text[0]));
+	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[2]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(CDMQueueCombo->Text)) {
+		Keyboard::Type(String::Format("{0}", CDMQueueCombo->Text[0]));
+		Sleep(500);
+	}
 	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(queueSettingWindow->GetClickablePoint().X), Convert::ToInt32(queueSettingWindow->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
 	safe_cast<InvokePattern^>(queueThreadSettings[2]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
 	safe_cast<InvokePattern^>(queueThreadSettings[3]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
-	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[3]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("1")) Keyboard::Type("1");
+	while (!safe_cast<ValuePattern^>(queueThreadSettingsCombo[3]->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("1")) {
+		Keyboard::Type("1");
+		Sleep(500);
+	}
 	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(queueSettingWindow->GetClickablePoint().X), Convert::ToInt32(queueSettingWindow->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
 	safe_cast<InvokePattern^>(queueThreadSettings[3]->GetCurrentPattern(InvokePattern::Pattern))->Invoke();
@@ -289,7 +303,10 @@ void AutoBenchUI::CDMConfigure(void) {
 	AutomationElement^ testCountButton = testCount->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button)));
 	InvokePattern^ testCountButtonInvokePattern = (InvokePattern^)testCountButton->GetCurrentPattern(InvokePattern::Pattern);
 	testCountButtonInvokePattern->Invoke();
-	while (!safe_cast<ValuePattern^>(testCount->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("5")) Keyboard::Type(String::Format("5"));
+	while (!safe_cast<ValuePattern^>(testCount->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals("5")) {
+		Keyboard::Type(String::Format("5"));
+		Sleep(500);
+	}
 	//Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testCountButton->GetClickablePoint().X), Convert::ToInt32(testCountButton->GetClickablePoint().Y)));
 	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(titleBar->GetClickablePoint().X), Convert::ToInt32(titleBar->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
@@ -299,7 +316,10 @@ void AutoBenchUI::CDMConfigure(void) {
 	AutomationElement^ testSizeButton = testSize->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button)));
 	InvokePattern^ testSizeButtonInvokePattern = (InvokePattern^)testSizeButton->GetCurrentPattern(InvokePattern::Pattern);
 	testSizeButtonInvokePattern->Invoke();
-	while (!safe_cast<ValuePattern^>(testSize->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(dataSizeCombo->Text)) Keyboard::Type(String::Format("{0}", dataSizeCombo->Text[0]));
+	while (!safe_cast<ValuePattern^>(testSize->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Equals(dataSizeCombo->Text)) {
+		Keyboard::Type(String::Format("{0}", dataSizeCombo->Text[0]));
+		Sleep(500);
+	}
 	//Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testSizeButton->GetClickablePoint().X), Convert::ToInt32(testSizeButton->GetClickablePoint().Y)));
 	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(titleBar->GetClickablePoint().X), Convert::ToInt32(titleBar->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
@@ -309,11 +329,15 @@ void AutoBenchUI::CDMConfigure(void) {
 	AutomationElement^ testDriveButton = testDrive->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Button)));
 	InvokePattern^ testDriveButtonInvokePattern = (InvokePattern^)testDriveButton->GetCurrentPattern(InvokePattern::Pattern);
 	testDriveButtonInvokePattern->Invoke();
-	while (!safe_cast<ValuePattern^>(testDrive->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Contains(CDMTargetCombo->Text)) Keyboard::Type(String::Format("{0}", CDMTargetCombo->Text[0]));
+	while (!safe_cast<ValuePattern^>(testDrive->GetCurrentPattern(ValuePattern::Pattern))->Current.Value->Contains(CDMTargetCombo->Text)) {
+		Keyboard::Type(String::Format("{0}", CDMTargetCombo->Text[0]));
+		Sleep(500);
+	}
 	//Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(testDriveButton->GetClickablePoint().X), Convert::ToInt32(testDriveButton->GetClickablePoint().Y)));
 	Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(titleBar->GetClickablePoint().X), Convert::ToInt32(titleBar->GetClickablePoint().Y)));
 	Mouse::Click(MouseButton::Left);
 	testDriveButtonInvokePattern->Invoke();
+	Sleep(500);
 	AutomationElement^ mainMenu = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "CrystalDiskMark"),
 		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Pane)));
 	AutomationElement^ startButton = mainMenu->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "All"),
@@ -341,8 +365,8 @@ void AutoBenchUI::IometerResultsConfigure(void) {
 	iometerResultsDataView->Rows[rowCount - 1]->Cells[3]->Value = "Seq. Read";
 	iometerResultsDataView->Rows[rowCount - 1]->Cells[4]->Value = "Seq. Read (IOPS)";
 	iometerResultsDataView->Rows[rowCount - 1]->Cells[5]->Value = "Ran. Write";
-	iometerResultsDataView->Rows[rowCount - 1]->Cells[6]->Value = "Ran. Read (IOPS)";
-	iometerResultsDataView->Rows[rowCount - 1]->Cells[7]->Value = "Ran. Write";
+	iometerResultsDataView->Rows[rowCount - 1]->Cells[6]->Value = "Ran. Write (IOPS)";
+	iometerResultsDataView->Rows[rowCount - 1]->Cells[7]->Value = "Ran. Read";
 	iometerResultsDataView->Rows[rowCount - 1]->Cells[8]->Value = "Ran. Read (IOPS)";
 	iometerResultsDataView->Rows->Insert(rowCount, 1);
 }
@@ -480,7 +504,7 @@ void AutoBenchUI::CDMUpdateThreadProc(void) {
 	stopButton = mainMenu->FindFirst(TreeScope::Descendants, gcnew AndCondition(gcnew PropertyCondition(AutomationElement::NameProperty, "Stop"),
 		gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Hyperlink)));
 	while (true) {
-		Thread::Sleep(20000);
+		Thread::Sleep(10000);
 		if (stopButton->Current.Name->Equals("All")) {
 			AutomationElementCollection^ resultsCollection = mainMenu->FindAll(TreeScope::Descendants, gcnew PropertyCondition(AutomationElement::ControlTypeProperty, ControlType::Text));
 			CDMResultsDataView->Rows[rowCount - 2]->Cells[0]->Value = resultsCollection[8]->Current.Name;
@@ -506,10 +530,11 @@ void AutoBenchUI::UpdateThreadProc(void) {
 	AutomationElement^ testStatus1 = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "StatusBar.Pane1")));
 	AutomationElement^ testStatus2 = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "StatusBar.Pane2")));
 	int rowCount = iometerResultsDataView->RowCount;
+	int currentTest, prevTest = 1;
 	eachBlockSize->Reset();
 	eachBlockSize->MoveNext();
 	while (true) {
-		Thread::Sleep(20000);
+		Thread::Sleep(10000);
 		if (testStatus0->Current.Name->Equals("Test Completed Successfully")) {
 			iometerResultsDataView->Rows[rowCount - 2]->Cells[7]->Value = speedText->Current.Name;
 			iometerResultsDataView->Rows[rowCount - 2]->Cells[8]->Value = iopsText->Current.Name;
@@ -520,9 +545,10 @@ void AutoBenchUI::UpdateThreadProc(void) {
 			return;
 		}
 		if (!testStatus1->Current.Name->Equals("Preparing Drives")) {
-			Match^ testNum = Regex::Match(testStatus2->Current.Name, "Run\\s+(.+)\\s+of");
-			int currentTest = Int32::Parse(testNum->Groups[1]->Value);
-			if (currentTest != 1) {
+			//Match^ testNum = Regex::Match(testStatus2->Current.Name, "Run\\s+(.+)\\s+of");
+			currentTest = Int32::Parse(Regex::Match(testStatus2->Current.Name, "Run\\s+(.+)\\s+of")->Groups[1]->Value);
+			if (currentTest != 1 && currentTest != prevTest) {
+				prevTest = currentTest;
 				switch (currentTest % 4) {
 				case 0:
 					iometerResultsDataView->Rows[rowCount - 2]->Cells[5]->Value = speedText->Current.Name;
