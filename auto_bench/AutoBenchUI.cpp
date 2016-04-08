@@ -419,9 +419,14 @@ void AutoBenchUI::IometerConfigure(void) {
 			newButtonInvokePattern->Invoke();
 			Sleep(500);
 			AutomationElement^ editAccessWindow = AutomationElement::RootElement->FindFirst(TreeScope::Descendants, (gcnew PropertyCondition(AutomationElement::NameProperty, "Edit Access Specification")));
+			AutomationElement^ transRequestSizeMB = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1032")));
+			RangeValuePattern^ transRequestSizeMBRangePattern = (RangeValuePattern^)transRequestSizeMB->GetCurrentPattern(RangeValuePattern::Pattern);
 			AutomationElement^ transRequestSize = editAccessWindow->FindFirst(TreeScope::Children, (gcnew PropertyCondition(AutomationElement::AutomationIdProperty, "1031")));
 			RangeValuePattern^ transRequestSizeRangePattern = (RangeValuePattern^)transRequestSize->GetCurrentPattern(RangeValuePattern::Pattern);
-			transRequestSizeRangePattern->SetValue(Int32::Parse((String ^)eachBlockSize->Current));
+			double quotient = (int)Double::Parse((String ^)eachBlockSize->Current) / 1024;
+			double remainder = (int)Double::Parse((String ^)eachBlockSize->Current) % 1024;
+			transRequestSizeMBRangePattern->SetValue(quotient);
+			transRequestSizeRangePattern->SetValue(remainder);
 			Mouse::MoveTo(System::Drawing::Point(Convert::ToInt32(transRequestSize->GetClickablePoint().X), Convert::ToInt32(transRequestSize->GetClickablePoint().Y)));
 			Mouse::Click(MouseButton::Left);
 
