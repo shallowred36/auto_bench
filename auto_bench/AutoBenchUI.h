@@ -72,6 +72,14 @@ namespace auto_bench {
 		System::Windows::Forms::Label^ iometerQueueLabel;
 		System::Windows::Forms::TextBox^ iometerQueueInput;
 		System::Windows::Forms::DataGridView^ iometerResultsDataView;
+		System::Windows::Forms::GroupBox^ iometerRampUpTimeGroup;
+		System::Windows::Forms::Label^ iometerRampUpTimeLabel;
+		System::Windows::Forms::Label^ iometerRampUpTimeUnitLabel;
+		System::Windows::Forms::TextBox^ iometerRampUpTimeInput;
+		System::Windows::Forms::GroupBox^ iometerRunTimeGroup;
+		System::Windows::Forms::Label^ iometerRunTimeLabel;
+		System::Windows::Forms::Label^ iometerRunTimeUnitLabel;
+		System::Windows::Forms::TextBox^ iometerRunTimeInput;
 		IEnumerator^ eachBlockSize;
 		Process^ iometerProcess;
 
@@ -88,6 +96,9 @@ namespace auto_bench {
 		System::Windows::Forms::Label^ CDMQueueLabel;
 		System::Windows::Forms::ComboBox^ CDMQueueCombo;
 		System::Windows::Forms::DataGridView^ CDMResultsDataView;
+		System::Windows::Forms::GroupBox^ CDMTestCountGroup;
+		System::Windows::Forms::Label^ CDMTestCountLabel;
+		System::Windows::Forms::ComboBox^ CDMTestCountCombo;
 		Process^ cdmProcess;
 
 	//Common properties
